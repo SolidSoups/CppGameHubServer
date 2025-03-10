@@ -45,7 +45,7 @@ struct Response
     {
         std::stringstream ss;
         ss << action << std::endl
-            << "(" << statusCodeToString.at(status) << ") " << statusMessage << std::endl
+           << statusCodeToString.at(status) << std::endl
             << dataMessage << "\n";
         return ss.str();
     }
@@ -62,6 +62,10 @@ enum TokenType
 	ADD_GAME,
 	REMOVE_GAME,
 	GET_GAMES,
+	ADD_PLAYER,
+	LOGIN_PLAYER,
+	BUY_GAME,
+	GET_OWNED_GAMES,
 	HELP,
 	_END_DISPLAY_HELP,
 
@@ -78,6 +82,10 @@ const std::pmr::unordered_map<std::string, TokenType> stringToTokenMap{
 	{"add_game", ADD_GAME},
 	{"remove_game", REMOVE_GAME},
 	{"get_games", GET_GAMES},
+	{"add_player", ADD_PLAYER},
+	{"login_player", LOGIN_PLAYER},
+	{"buy_game", BUY_GAME},
+	{"get_owned_games", GET_OWNED_GAMES},
 	{"arg", ARG},
 	{"help", HELP}
 };
@@ -91,19 +99,12 @@ const std::pmr::unordered_map<TokenType, std::string> tokenToStringNameMap{
 	{ADD_GAME, "add_game"},
 	{REMOVE_GAME, "remove_game"},
 	{GET_GAMES, "get_games"},
+	{ADD_PLAYER, "add_player"},
+	{LOGIN_PLAYER, "login_player"},
+	{BUY_GAME, "buy_game"},
+	{GET_OWNED_GAMES, "get_owned_games"},
 	{ARG, "arg"},
 	{HELP, "help"}
-};
-const std::pmr::unordered_map<TokenType, int> tokenTypeToArgumentSize{
-	{CREATE_DATABASE, 2},
-	{LOGIN_USER, 2},
-	{ADD_ADMIN, 2},
-	{ADD_USER, 2},
-	{REMOVE_USER, 1},
-	{GET_USERS, 0},
-	{ADD_GAME, 1},
-	{REMOVE_GAME, 1},
-	{GET_GAMES, 0},
 };
 const std::pmr::unordered_map<TokenType, std::string> cmdlineHelpTextMap{
 	{
@@ -141,6 +142,22 @@ const std::pmr::unordered_map<TokenType, std::string> cmdlineHelpTextMap{
 	{
 		GET_GAMES,
 		"get_games : Get a list of all games. (user)"
+	},
+	{
+		ADD_PLAYER,
+		"add_player [email] [password] : Add a player. (none)"
+	},
+	{
+		LOGIN_PLAYER,
+		"login_player [email] [password] : Login as a player. (none)"
+	},
+	{
+		BUY_GAME,
+		"buy_game [name] : Buy a game. (Player)"
+	},
+	{
+		GET_OWNED_GAMES,
+		"get_owned_games : Get owned games. (Player)"
 	},
 	{
 		HELP,

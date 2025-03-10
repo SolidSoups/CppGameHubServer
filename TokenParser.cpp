@@ -21,7 +21,6 @@ void coutDebug(const std::string& message)
 /// Starts parsing tokens
 void TokenParser::startParsingTokens()
 {
-	coutDebug("-Starting parsing tokens");
 	if (peek().m_type == ARG)
 	{
 		std::cerr << "First token is an argument" << std::endl;
@@ -68,7 +67,6 @@ void coutBadParameter(const std::string& action, const std::string& sMessage = "
 void TokenParser::iterateTokens()
 {
 	Token cmdToken = advance();
-	
 	std::vector<Token> argTokens;
 	bool commandsFailed = false;
 	while (pos <= tokens.size())
@@ -97,47 +95,19 @@ void TokenParser::iterateTokens()
 	if (commandsFailed)
 	{
 		server->saveDataBase();
-		std::cout << "Saved the database" << std::endl;
 	}
-	else
-		std::cout << "Could not save the database" << std::endl;
-	//	
 }
 
 // Validates the arguments expected for a command to execute
 bool validateCommandArguments(size_t expected, const std::vector<Token>& argTokens, const std::string& cmdName)
 {
 	size_t argSize = argTokens.size();
-	if (argSize != expected)
-	{
-		int maxArgs = std::max(expected, argSize);
-		std::stringstream ss;
-		ss << cmdName << " ";
-		for (int i=0; i<maxArgs; i++)
-		{
-			if (i < expected)
-			{
-				if (i < argSize) // we are still at valid args
-				{
-					ss << argTokens[i].m_value;			
-				}
-				else // we are missing args
-				{
-					ss << "~[arg]~";		
-				}
-			}
-			else //  we have exceeded valid args
-			{
-				ss << "?" << argTokens[i].m_value << '?'; 
-			}
-			
-			ss << " ";
-		}
-		coutBadParameter(ss.str());
-			
-		return false;
-	}
-	return true;
+	if (expected <= argSize)
+		return true;
+	std::stringstream ss;
+	ss << cmdName;
+	coutBadParameter(ss.str());
+	return false;
 }
 
 /// Determines if a command can be executed, gives it the correct parameters and executes it.
@@ -146,7 +116,6 @@ bool TokenParser::executeCommand(const Token& cmdToken, const std::vector<Token>
 	auto command = CommandFactory::Create(cmdToken.m_type); // create command from TokenType
 	if (!command) // command not found
 	{
-		coutBadParameter(cmdToken.m_value, "Bad Request - Unknown command");
 		return false;
 	}
 
@@ -155,41 +124,40 @@ bool TokenParser::executeCommand(const Token& cmdToken, const std::vector<Token>
 	auto oneArgCmd = dynamic_cast<OneArgServerCommand*>(command.get());
 	auto twoArgsCmd = dynamic_cast<TwoArgServerCommand*>(command.get());
 
-	coutDebug("-Checking casts");
 	// validate and fill args
+	size_t argsUsed = 0;
 	if (noArgsCmd)
 	{
-		coutDebug("-Requires no args");
 		if (!validateCommandArguments(0, argTokens, cmdToken.m_value))
 			return false;
-		coutDebug("-Supplying no args");
 	}
 	else if (oneArgCmd)
 	{
-		coutDebug("-Requires one args");
 		if (!validateCommandArguments(1, argTokens, cmdToken.m_value))
 			return false;
 
-		coutDebug("-Supplying args");
 		oneArgCmd->arg0 = argTokens[0].m_value;
-		coutDebug("Arg0 is " + argTokens[0].m_value);
+		argsUsed = 1;
 	}
 	else if (twoArgsCmd)
 	{
-		coutDebug("-Requires two args, argTokens.count() is " + std::to_string(argTokens.size()));
 		if (!validateCommandArguments(2, argTokens, cmdToken.m_value))
 			return false;
 
-		coutDebug("-Supplying args");
 		twoArgsCmd->arg0 = argTokens[0].m_value;
 		twoArgsCmd->arg1 = argTokens[1].m_value;
-		coutDebug("Arg0 is " + argTokens[0].m_value);
-		coutDebug("Arg1 is " + argTokens[1].m_value);
+		argsUsed = 2;
 	}
 
 	// execute command and get response
-	coutDebug("-Executing command");
 	Response rsp = command->Execute(*server);
 	std::cout << rsp.getString();
+
+	// check if we need to step back
+	if (argTokens.size() > argsUsed)
+	{
+		step_back(argTokens.size() - argsUsed);
+	}
+
 	return rsp.status == S200 || rsp.status == S201;
 }

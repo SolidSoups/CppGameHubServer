@@ -26,6 +26,7 @@ private:
 
 	Token peek() { return tokens[pos]; }
 	Token advance() { return tokens[pos++]; }
+	void step_back(const size_t& steps) { pos -= steps;}
 
 	void iterateTokens();
 	// TODO: implement this

@@ -3,6 +3,9 @@
 //
 
 #include "Command.h"
+
+#include <iostream>
+
 #include "GameHubServer.h"
 
 
@@ -49,4 +52,24 @@ Response RemoveGame_ServerCommand::Execute(GameHubServer& server)
 Response GetGames_ServerCommand::Execute(GameHubServer& server)
 {
 	return server.getGames();
+}
+
+Response AddPlayer_ServerCommand::Execute(GameHubServer& server)
+{
+	return server.addPlayer(arg0, arg1);
+}
+
+Response LoginPlayer_ServerCommand::Execute(GameHubServer& server)
+{
+	return server.loginPlayer(arg0);
+}
+
+Response BuyGame_ServerCommand::Execute(GameHubServer& server)
+{
+	return server.buyGame(arg0);
+}
+
+Response GetOwnedGames_ServerCommand::Execute(GameHubServer& server)
+{
+	return server.getOwnedGames();
 }

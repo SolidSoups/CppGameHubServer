@@ -9,6 +9,7 @@
 
 #include "datatypes.h"
 #include "Game.h"
+#include "Player.h"
 #include "User.h"
 
 
@@ -18,8 +19,10 @@ class GameHubServer
 {
 private:
     std::vector<User*>* m_users;
+    std::vector<Player*>* m_players;
     std::vector<Game*>* m_games;
     User* m_loggedInUser;
+    Player* m_loggedInPlayer;
     const std::string fileName = "database.bin";
 
     void Initialize();
@@ -28,6 +31,7 @@ private:
     bool isUserLoggedIn();
     bool isAdminLoggedIn();
     bool doesUserExist(const std::string& email, size_t& outIndexFound);
+    bool doesPlayerExist(const std::string& email, size_t& outIndexFound);
     bool doesGameExist(const std::string& name, size_t& outIndexFound);
 public:
     bool saveDataBase();
@@ -36,6 +40,9 @@ public:
     {
         delete m_users;
         m_users = nullptr;
+
+        delete m_players;
+        m_players = nullptr;
         
         delete m_games;
         m_games = nullptr;
@@ -54,4 +61,8 @@ public:
     Response removeGame(const std::string& name);
     Response getGames();
 
+    Response loginPlayer(const std::string& playerEmail);
+    Response addPlayer(const std::string& playerEmail, const std::string& playerPassword);
+    Response buyGame(const std::string& gameName);
+    Response getOwnedGames();
 };

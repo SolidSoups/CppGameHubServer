@@ -91,3 +91,31 @@ public:
 	GetGames_ServerCommand(){}
 	Response Execute(GameHubServer& server) override;
 };
+
+class AddPlayer_ServerCommand : public TwoArgServerCommand
+{
+public:
+	AddPlayer_ServerCommand(){}
+	Response Execute(GameHubServer& server) override;
+};
+
+class LoginPlayer_ServerCommand : public OneArgServerCommand
+{
+public:
+	LoginPlayer_ServerCommand(){}
+	Response Execute(GameHubServer& server) override;
+};
+
+class BuyGame_ServerCommand : public OneArgServerCommand
+{
+public:
+	BuyGame_ServerCommand(){}
+	Response Execute(GameHubServer& server) override;
+};
+
+class GetOwnedGames_ServerCommand : public NoArgServerCommand
+{
+public:
+	GetOwnedGames_ServerCommand(){}
+	Response Execute(GameHubServer& server) override;
+};

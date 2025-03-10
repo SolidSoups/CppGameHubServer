@@ -15,6 +15,10 @@ CommandFactory::CommandPtr CommandFactory::Create(TokenType type)
 		{TokenType::GET_USERS, []() { return std::make_unique<GetUsers_ServerCommand>(); }},
 		{TokenType::ADD_GAME, []() { return std::make_unique<AddGame_ServerCommand>(); }},
 		{TokenType::REMOVE_GAME, []() { return std::make_unique<RemoveGame_ServerCommand>(); }},
+		{ADD_PLAYER, []() { return std::make_unique<AddPlayer_ServerCommand>(); }},
+		{LOGIN_PLAYER, []() {return std::make_unique<LoginPlayer_ServerCommand>(); }},
+		{BUY_GAME, []() {return std::make_unique<BuyGame_ServerCommand>(); }},
+		{GET_OWNED_GAMES, []() {return std::make_unique<GetOwnedGames_ServerCommand>(); }},
 		{TokenType::GET_GAMES, []() { return std::make_unique<GetGames_ServerCommand>(); }},
 	};
 

@@ -20,16 +20,17 @@ void User::save(std::ofstream& outf)
 {
     // write email
     size_t emailSize = m_email.size();
-    outf.write(reinterpret_cast<char*>(&emailSize), sizeof(emailSize));
+    outf.write(reinterpret_cast<char*>(&emailSize), sizeof(size_t));
     outf.write(m_email.c_str(), emailSize);
 
     // write password *super secret style*
     size_t passSize = m_password.size();
-    outf.write(reinterpret_cast<char*>(&passSize), sizeof(passSize));
+    outf.write(reinterpret_cast<char*>(&passSize), sizeof(size_t));
     outf.write(m_password.c_str(), passSize);
 
     // write isAdmin
     outf.write(reinterpret_cast<char*>(&m_bAdmin), sizeof(bool));
+
 }
 
 void User::load(std::ifstream& inf, User*& outUser)
@@ -50,6 +51,6 @@ void User::load(std::ifstream& inf, User*& outUser)
     bool isAdmin(0);
     inf.read(reinterpret_cast<char*>(&isAdmin), sizeof(bool));
 
-    outUser = new User{email, password, isAdmin}; 
+    outUser = new User{email, password, isAdmin};
 }
 
